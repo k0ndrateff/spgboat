@@ -81,7 +81,7 @@ void loop() {
   //Передача данных
   radio.write( &data , sizeof(data) );      
                                             
-  delay(200);
+  delay(50);
 }
 
 /**
