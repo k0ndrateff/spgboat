@@ -1,9 +1,9 @@
 /**
   SPGBoat 2020
-  This file contains source code for boat microcontroller.
-  Original author: @k0ndrateff
-  Mechanical engineer: @bobr137
-  Version: 4.0 14/04/20
+  Исходный код катера
+  Автор: @k0ndrateff
+  Инженер: @bobr137
+  Версия: 4.1 22/04/20
 */
 
 #include <TinyGPS.h>
@@ -14,7 +14,7 @@
 #include <nRF24L01.h>                                          
 #include <RF24.h>         
 
-//Modules define                                             
+//Определение модулей                                             
 SoftwareSerial nss(6, 7);
 TinyGPS gps;
 Servo servo;
@@ -22,30 +22,30 @@ RF24 radio(7, 10);
 
 iarduino_I2C_Relay pwrkey(0x09);
 
-//GPS data
+//GPS данные
 long lat, lon;
 unsigned long fix_age, time, date, speed, course;
 unsigned long chars;
 unsigned short sentences, failed_checksum;
 int data[5];
 
-//Servo constants (blades degree)
+//Константы сервопривода
 const int center = 45;
 const int left = 5;
 const int right = 80;
                                         
 void setup() {       
-  //Data logging and GPS init                   
+  //Инициализация GPS                   
   Serial.begin(9600);                      
   nss.begin(9600);
 
-  //Powerkey init (engine control)
+  //Инициализация силового ключа
   pwrkey.begin();     
   pwrkey.digitalWrite(ALL_CHANNEL, LOW);   
 
   servo.attach(6);  
 
-  //Radio module init
+  //Инициализация радиомодуля
   radio.begin();                                             
   radio.setChannel      (27);                                
   radio.setDataRate     (RF24_1MBPS);                        
@@ -55,7 +55,7 @@ void setup() {
 }                                       
                                        
 void loop() {      
-  //GPS data receive               
+  //GPS получение данных               
   if (nss.available())
   {
     int c = nss.read();
@@ -68,15 +68,14 @@ void loop() {
       course = gps.course();
     }
   } 
-  // TODO: GPS doesn`t work for unknown reason!
   
-  //Radio data from controller receive
+  //Получение данных с пульта
   if (radio.available())  {
     radio.read( &data, sizeof(data) );  
     Serial.print(data[0]);                     
   }
 
-  //Manual operation (with joystick)
+  //Ручное управление
   if (data[0] == 2) {
     servo.write(left);
     pwrkey.digitalWrite(1, HIGH);
